@@ -12,7 +12,6 @@ A lightweight, high-performance task queue built on Node JS and Redis. Includes 
 - Super-fast async task processing
 - Throttling to avoid congestion
 - Scheduled processing to defer specific messages
-- Chainable worker modules
 - Logging and robust error handling
 
 ## Installation
