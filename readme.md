@@ -111,7 +111,7 @@ To continue the example above, the following message…
 
 ## Workers
 
-A worker receives 3 parameters:
+A worker should export a function that receives 3 parameters:
 
 * `req`
   * `message` : The full message
