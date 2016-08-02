@@ -1,0 +1,26 @@
+{
+  "queue": {
+    "host": "127.0.0.1",
+    "port": 6379
+  },
+  "broker": {
+    "queue": "myqueue",
+    "interval": [ 0, 1, 5, 10 ],
+    "retries": 10,
+    "timeout": 30,
+    "throttle": 5
+  },
+  "workers": {
+    "path": "./workers"
+  },
+  "logging": {
+    "enabled": true,
+    "level": "info",
+    "path": "./log",
+    "filename": "error",
+    "extension": "log",
+    "accessLog": {
+      "enabled": false
+    }
+  }
+}
