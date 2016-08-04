@@ -126,7 +126,7 @@ A worker should export a function that receives 3 parameters:
 
 ### Success
 
-On success, a worker should call `done()`, which will notify the broker to delete the message.
+On success, a worker should call `done()`, which will notify the broker to delete the message. This will also release the throttle if it is currently in operation.
 
 ### Error
 
