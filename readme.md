@@ -128,7 +128,7 @@ A worker should export a function that receives 3 parameters:
 
 On success, a worker should call `done()`, which will notify the broker to delete the message. This will also release the throttle if it is currently in operation.
 
-### Error
+### Error
 
 On error, a worker should call `done(err)`, passing either an error string or an `Error` object, which will notify the broker to log the error. The message will remain in the queue and will be retried if the message has any attempts remaining.
 
@@ -156,8 +156,8 @@ Be aware of any 3rd party APIs and ensure the appropriate timeout values are set
 
 - Decoupling: by creating a layer in-between processes with an implicit, data-based interface
 - Redundancy: by persisting data until it has been fully processed
-- Scalability: by simply adding another process to increase the processing rate
-- Resiliency: because messages can still be added to the queue even if the processing is offline
+- Scalability: increase the processing rate by simply adding another process
+- Resiliency: messages can still be added to the queue even if the processing worker is offline
 - Guarantees: delivery is guaranteed and messages are processed in the order received
 - Scheduling: processing can be deferred until system resources are optimal
 
