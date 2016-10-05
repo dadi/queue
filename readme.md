@@ -2,6 +2,8 @@
 
 A lightweight, high-performance task queue built on Node JS and Redis. Includes a broker for queue management and routing, plus a worker framework for processing messages.
 
+See the [Why do I need a task queue?](#why-do-I-need-a-task-queue) section for more information on using a task queue.
+
 ## Overview
 
 - Messages are stored in a Redis queue
