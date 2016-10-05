@@ -142,7 +142,9 @@ Workers **must** restrict their processing time to less then the timeout value s
 
 Be aware of any 3rd party APIs and ensure the appropriate timeout values are set.
 
-## Common uses for a task queue
+## Why do I need a task queue?
+
+### Common uses
 
 - Image processing
 - Push notifications
@@ -152,7 +154,7 @@ Be aware of any 3rd party APIs and ensure the appropriate timeout values are set
 - Replacing CRON
 - Processing webhooks
 
-## Benefits of using a task queue
+### Benefits
 
 - Decoupling: by creating a layer in-between processes with an implicit, data-based interface
 - Redundancy: by persisting data until it has been fully processed
@@ -160,6 +162,12 @@ Be aware of any 3rd party APIs and ensure the appropriate timeout values are set
 - Resiliency: messages can still be added to the queue even if the processing worker is offline
 - Guarantees: delivery is guaranteed and messages are processed in the order received
 - Scheduling: processing can be deferred until system resources are optimal
+
+### Case study
+
+An online shop interacts with a number of external APIs when a customer places an order: CRM system, payment gateway, fraud protection, email confirmation, newsletter signup. Performing these interactions synchronously makes the checkout process slow, tightly coupled to the external APIs and error prone, due to the number of failure points.
+
+Using a task queue, each interaction can become a worker module. On order confirmation, the checkout process simply sends the relevant messages to the queue, e.g. create-customer, create-transaction, etc., then shows the confirmation page. The user experience is fast, the API code is decoupled from the checkout and the workers are retried on error (and can perform an action after a number of attempts, such as sending a notification email).
 
 ## Contributors
 
