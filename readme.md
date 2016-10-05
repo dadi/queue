@@ -2,7 +2,7 @@
 
 A lightweight, high-performance task queue built on Node JS, Redis and [RSMQ](https://github.com/smrchy/rsmq). Includes a broker for queue management and routing, plus a worker framework for processing messages.
 
-See the [Why do I need a task queue?](#why-do-I-need-a-task-queue) section for more information on using a task queue.
+See the [Why do I need a task queue?](#why-do-i-need-a-task-queue) section for more information on using a task queue.
 
 ## Overview
 
