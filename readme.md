@@ -64,7 +64,7 @@ See the [Why do I need a task queue?](#why-do-i-need-a-task-queue) section for m
 
 ## Sending messages
 
-In most cases, the easiest way to send message to the queue is to use **@dadi/queue-wrapper** from within your app.
+In most cases, the easiest way to send a message to the queue is to use [@dadi/queue-wrapper](https://github.com/dadi/queue-wrapper) from within your app.
 
 See the following related projects for other ways to interact with the queue:
 
@@ -169,7 +169,7 @@ Be aware of any 3rd party APIs and ensure the appropriate timeout values are set
 
 An online shop may interact with a number of external APIs when a customer places an order: CRM system, payment gateway, fraud protection, email confirmation, newsletter signup. Performing these interactions synchronously makes the checkout process slow, tightly coupled to the external APIs and error prone, due to the number of failure points.
 
-Using a task queue, each interaction can become a worker module. On order confirmation, the checkout process simply sends the relevant messages to the queue, e.g. create-customer, create-transaction, etc., then shows the confirmation page. The user experience is fast, the API code is decoupled from the checkout and the workers are retried on error (and can perform an action after a number of attempts, such as sending a notification email).
+Using a task queue, each API interaction can become a worker module. On order confirmation, the checkout process simply sends the relevant messages to the queue, e.g. create-customer, create-transaction, etc., then shows the confirmation page. The user experience is fast, the API code is decoupled from the checkout and the workers are retried on error (and can perform an action after a number of attempts, such as sending a notification email).
 
 ## Contributors
 
