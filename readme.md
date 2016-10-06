@@ -201,7 +201,7 @@ GNU Affero General Public License for more details.
 
 The GNU Affero General Public License (AGPL) is available at
 http://www.gnu.org/licenses/agpl-3.0.en.html.<br />
-A copy can be found in the file AGPL.md distributed with
+A copy can be found in the file license.md distributed with
 these files.
 
 This copyright notice MUST APPEAR in all copies of the product!
