@@ -171,6 +171,37 @@ An online shop may interact with a number of external APIs when a customer place
 
 Using a task queue, each API interaction can become a worker module. On order confirmation, the checkout process simply sends the relevant messages to the queue, e.g. create-customer, create-transaction, etc., then shows the confirmation page. The user experience is fast, the API code is decoupled from the checkout and the workers are retried on error (and can perform an action after a number of attempts, such as sending a notification email).
 
-## Contributors
-
 ## License
+
+DADI is a data centric development and delivery stack, built specifically in support of the principles of API first and COPE.
+
+Copyright notice
+(C) 2016 DADI+ Limited <support@dadi.tech>
+All rights reserved
+
+This product is part of DADI.<br />
+DADI is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version ("the AGPL").
+
+**If you wish to use DADI outside the scope of the AGPL, please
+contact us at info@dadi.co for details of alternative licence
+arrangements.**
+
+**This product may be distributed alongside other components
+available under different licences (which may not be AGPL). See
+those components themselves, or the documentation accompanying
+them, to determine what licences are applicable.**
+
+DADI is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+The GNU Affero General Public License (AGPL) is available at
+http://www.gnu.org/licenses/agpl-3.0.en.html.<br />
+A copy can be found in the file AGPL.md distributed with
+these files.
+
+This copyright notice MUST APPEAR in all copies of the product!
