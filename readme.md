@@ -68,8 +68,8 @@ In most cases, the easiest way to send a message to the queue is to use [@dadi/q
 
 See the following related projects for other ways to interact with the queue:
 
-* rsmq-cli
-* rest-rsmq
+* [rsmq-cli](https://github.com/mpneuried/rsmq-cli)
+* [rest-rsmq](https://github.com/smrchy/rest-rsmq)
 
 ## Receiving messages
 
