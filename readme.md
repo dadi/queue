@@ -12,7 +12,7 @@ See the [Why do I need a task queue?](#why-do-i-need-a-task-queue) section for m
 - Messages are unhidden from the queue after timeout or failure
 - Messages are deleted only after successful processing or after exceeding the maximum retry value
 - Super-fast async task processing
-- Throttling to avoid congestion
+- Optional throttling to avoid congestion
 - Scheduled processing to defer specific messages
 - Logging and robust error handling
 
