@@ -1,5 +1,10 @@
 # DADI Queue
 
+[![npm (scoped)](https://img.shields.io/npm/v/@dadi/queue.svg?maxAge=10800&style=flat-square)](https://www.npmjs.com/package/@dadi/queue)
+[![coverage](https://img.shields.io/badge/coverage-69%25-yellow.svg?style=flat-square)](https://github.com/dadi/queue)
+[![Build Status](https://travis-ci.org/dadi/queue.svg?branch=master)](https://travis-ci.org/dadi/queue)
+[![JavaScript Style Guide](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](http://standardjs.com/)
+
 A lightweight, high-performance task queue built on Node JS, Redis and [RSMQ](https://github.com/smrchy/rsmq). Includes a broker for queue management and routing, plus a worker framework for processing messages.
 
 See the [Why do I need a task queue?](#why-do-i-need-a-task-queue) section for more information on using a task queue.
@@ -15,6 +20,11 @@ See the [Why do I need a task queue?](#why-do-i-need-a-task-queue) section for m
 - Optional throttling to avoid congestion
 - Scheduled processing to defer specific messages
 - Logging and robust error handling
+
+## Requirements
+
+ - Node
+ - Note: RSMQ uses the Redis EVAL command (LUA scripts) so the minimum Redis version is 2.6+.
 
 ## Installation
 

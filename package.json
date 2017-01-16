@@ -3,14 +3,28 @@
   "version": "1.0.0",
   "description": "A lightweight, high-performance task queue built on Node JS and Redis. Includes a broker for queue management and routing, plus a worker framework for processing messages.",
   "main": "index.js",
+  "scripts": {
+    "test": "standard 'lib/*.js' && env NODE_ENV=test ./node_modules/.bin/istanbul cover --report cobertura --report text --report html --report lcov ./node_modules/mocha/bin/_mocha",
+    "posttest": "./scripts/coverage.js",
+    "start": "node ./index.js --node-env=development"
+  },
   "dependencies": {
     "@dadi/logger": "^1.0.1",
     "convict": "^1.4.0",
     "rsmq-worker": "^0.4.3"
   },
-  "scripts": {
-    "test": "node_modules/.bin/mocha",
-    "start": "node ./index.js --node-env=development"
+  "devDependencies": {
+    "babel-register": "^6.18.0",
+    "env-test": "^1.0.0",
+    "fakeredis": "^1.0.3",
+    "istanbul": "^1.1.0-alpha.1",
+    "istanbul-cobertura-badger": "^1.2.1",
+    "mocha": "^3.2.0",
+    "redis": "^2.6.4",
+    "should": "^11.1.2",
+    "sinon": "^1.17.7",
+    "standard": "^8.6.0",
+    "supertest": "^2.0.1"
   },
   "repository": {
     "type": "git",
