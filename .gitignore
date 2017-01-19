@@ -1,4 +1,6 @@
 config.*json
 log/*
+*.log
 node_modules/
 coverage/
+scripts/

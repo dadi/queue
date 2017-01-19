@@ -1,7 +1,7 @@
 # DADI Queue
 
 [![npm (scoped)](https://img.shields.io/npm/v/@dadi/queue.svg?maxAge=10800&style=flat-square)](https://www.npmjs.com/package/@dadi/queue)
-[![coverage](https://img.shields.io/badge/coverage-69%25-yellow.svg?style=flat-square)](https://github.com/dadi/queue)
+[![coverage](https://img.shields.io/badge/coverage-95%25-brightgreen.svg?style=flat-square)](https://github.com/dadi/queue)
 [![Build Status](https://travis-ci.org/dadi/queue.svg?branch=master)](https://travis-ci.org/dadi/queue)
 [![JavaScript Style Guide](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](http://standardjs.com/)
 
