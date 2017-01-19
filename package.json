@@ -4,7 +4,7 @@
   "description": "A lightweight, high-performance task queue built on Node JS and Redis. Includes a broker for queue management and routing, plus a worker framework for processing messages.",
   "main": "index.js",
   "scripts": {
-    "docs": "jsdoc -c ./docs/conf.json -t ./node_modules/ink-docstrap/template -R README.md -r lib -d docs",
+    "docs": "jsdoc -c ./doc-config.json -t ./node_modules/ink-docstrap/template -R README.md -r lib -d docs",
     "test": "snazzy 'lib/*.js' && env NODE_ENV=test ./node_modules/.bin/istanbul cover --report cobertura --report text --report html --report lcov ./node_modules/mocha/bin/_mocha",
     "posttest": "./scripts/coverage.js",
     "start": "node ./index.js --node-env=development",
@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@dadi/logger": "^1.0.1",
+    "colors": "^1.1.2",
+    "console-stamp": "^0.2.5",
     "convict": "^1.4.0",
     "rsmq-worker": "^0.4.3"
   },
