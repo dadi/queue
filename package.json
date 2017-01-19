@@ -1,13 +1,14 @@
 {
   "name": "@dadi/queue",
-  "version": "1.0.0",
+  "version": "0.0.0-development",
   "description": "A lightweight, high-performance task queue built on Node JS and Redis. Includes a broker for queue management and routing, plus a worker framework for processing messages.",
   "main": "index.js",
   "scripts": {
     "docs": "jsdoc -c ./docs/conf.json -t ./node_modules/ink-docstrap/template -R README.md -r lib -d docs",
-    "test": "snazzy 'lib/*.js' && env NODE_ENV=test ./node_modules/.bin/istanbul cover --report cobertura --report text --report html --report lcov ./node_modules/mocha/bin/_mocha && npm run docs",
+    "test": "snazzy 'lib/*.js' && env NODE_ENV=test ./node_modules/.bin/istanbul cover --report cobertura --report text --report html --report lcov ./node_modules/mocha/bin/_mocha",
     "posttest": "./scripts/coverage.js",
-    "start": "node ./index.js --node-env=development"
+    "start": "node ./index.js --node-env=development",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "dependencies": {
     "@dadi/logger": "^1.0.1",
@@ -27,11 +28,12 @@
     "sinon": "^1.17.7",
     "snazzy": "^5.0.0",
     "standard": "^8.6.0",
-    "supertest": "^2.0.1"
+    "supertest": "^2.0.1",
+    "semantic-release": "^6.3.2"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/dadi/queue.git"
+    "url": "https://github.com/dadi/queue.git"
   },
   "author": "Robert Stanford <rs@dadi.co>"
 }
