@@ -32,15 +32,43 @@ util.inherits(FakeRsmq, EventEmitter)
 describe('Broker', function (done) {
   beforeEach(function (done) {
     config.set('workers.path', path.resolve(path.join(__dirname, '../workers')))
+
+    fakeRsmq = new FakeRsmq()
+    sinon.stub(Broker.prototype, 'initialiseQueue').returns(fakeRsmq)
+
     done()
+  })
+
+  afterEach(function (done) {
+    Broker.prototype.initialiseQueue.restore()
+    done()
+  })
+
+  describe('Worker', function () {
+    it('should receive additional data passed in the message request', function (done) {
+      queueHandler = new QueueHandler()
+
+      var msg = {
+        message: 'sms:send-reminder:123456',
+        address: 'hello',
+        sent: Date.now(),
+        rc: 1
+      }
+
+      var spy = sinon.spy(Router.prototype, 'getWorkerData')
+
+      fakeRsmq.emit('data', msg)
+
+      spy.restore()
+      spy.called.should.eql(true)
+      var returnValue = spy.firstCall.returnValue
+      returnValue.should.eql('123456')
+      done()
+    })
   })
 
   describe('Queue', function () {
     it('should be started by throttle', function(done) {
-      fakeRsmq = new FakeRsmq()
-
-      sinon.stub(Broker.prototype, 'initialiseQueue').returns(fakeRsmq)
-
       var msg = {
         message: 'XXX',
         address: 'hello',
@@ -66,17 +94,12 @@ describe('Broker', function (done) {
 
       spy.restore()
       handlerStub.restore()
-      Broker.prototype.initialiseQueue.restore()
 
       spy.calledOnce.should.eql(true)
       done()
     })
 
     it('should be stopped by throttle', function(done) {
-      fakeRsmq = new FakeRsmq()
-
-      sinon.stub(Broker.prototype, 'initialiseQueue').returns(fakeRsmq)
-
       var msg = {
         message: 'XXX',
         address: 'hello',
@@ -99,12 +122,11 @@ describe('Broker', function (done) {
       queueHandler.queue.throttle.val = 5
 
       fakeRsmq.emit('message', msg, function() {
-        
+
       })
 
       spy.restore()
       handlerStub.restore()
-      Broker.prototype.initialiseQueue.restore()
 
       spy.calledOnce.should.eql(true)
       done()
@@ -115,16 +137,12 @@ describe('Broker', function (done) {
         message: 'XXX'
       }
 
-      fakeRsmq = new FakeRsmq()
-      sinon.stub(Broker.prototype, 'initialiseQueue').returns(fakeRsmq)
-
       var queueHandler = new QueueHandler()
       var spy = sinon.spy(QueueHandler.prototype, 'handle')
 
       fakeRsmq.emit('error', 'ERROR', msg)
 
       spy.restore()
-      Broker.prototype.initialiseQueue.restore()
 
       spy.calledOnce.should.eql(true)
       var arg = spy.firstCall.args[0]
@@ -142,16 +160,12 @@ describe('Broker', function (done) {
         rc: 1
       }
 
-      fakeRsmq = new FakeRsmq()
-      sinon.stub(Broker.prototype, 'initialiseQueue').returns(fakeRsmq)
-
       var queueHandler = new QueueHandler()
       var spy = sinon.spy(QueueHandler.prototype, 'handle')
 
       fakeRsmq.emit('data', msg)
 
       spy.restore()
-      Broker.prototype.initialiseQueue.restore()
 
       spy.called.should.eql(true)
       var args = spy.firstCall.args
@@ -168,9 +182,6 @@ describe('Broker', function (done) {
         rc: 1
       }
 
-      fakeRsmq = new FakeRsmq()
-      sinon.stub(Broker.prototype, 'initialiseQueue').returns(fakeRsmq)
-
       var queueHandler = new QueueHandler()
 
       var handlerStub = sinon.stub(QueueHandler.prototype, 'handle', function (err, req, done) {
@@ -186,7 +197,6 @@ describe('Broker', function (done) {
 
       spy.restore()
       handlerStub.restore()
-      Broker.prototype.initialiseQueue.restore()
 
       spy.called.should.eql(true)
       var args = spy.firstCall.args
@@ -196,17 +206,6 @@ describe('Broker', function (done) {
   })
 
   describe('processResponse', function () {
-    beforeEach(function (done) {
-      fakeRsmq = new FakeRsmq()
-      sinon.stub(Broker.prototype, 'initialiseQueue').returns(fakeRsmq)
-      done()
-    })
-
-    afterEach(function (done) {
-      Broker.prototype.initialiseQueue.restore()
-      done()
-    })
-
     it('should create a WorkerError when an error is returned by the QueueHandler', function (done) {
       queueHandler = new QueueHandler()
 

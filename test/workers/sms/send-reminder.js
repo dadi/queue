@@ -1,4 +1,4 @@
 module.exports = (req, queue, done) => {
-  console.log('hello world')
+  // console.log('send reminder!', req)
   done()
 }
