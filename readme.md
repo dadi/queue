@@ -1,7 +1,7 @@
 # DADI Queue
 
 [![npm (scoped)](https://img.shields.io/npm/v/@dadi/queue.svg?maxAge=10800&style=flat-square)](https://www.npmjs.com/package/@dadi/queue)
-[![coverage](https://img.shields.io/badge/coverage-95%25-brightgreen.svg?style=flat-square)](https://github.com/dadi/queue)
+[![coverage](https://img.shields.io/badge/coverage-94%25-brightgreen.svg?style=flat-square)](https://github.com/dadi/queue)
 [![Build Status](https://travis-ci.org/dadi/queue.svg?branch=master)](https://travis-ci.org/dadi/queue)
 [![JavaScript Style Guide](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](http://standardjs.com/)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
@@ -24,8 +24,8 @@ See the [Why do I need a task queue?](#why-do-i-need-a-task-queue) section for m
 
 ## Requirements
 
- - Node
- - Note: RSMQ uses the Redis EVAL command (LUA scripts) so the minimum Redis version is 2.6+.
+ - Node.js version 4.7 or greater
+ - Redis version 2.6 or greater, due to RSMQ's use of the Redis EVAL command (LUA scripts)
 
 ## Installation
 
@@ -35,23 +35,19 @@ See the [Why do I need a task queue?](#why-do-i-need-a-task-queue) section for m
 
 2. Ensure you have a Redis server running and accessible
 
-3. Ensure your project contains a *config* directory in the root, plus a *log* directory and a *workers* directory
+3. *config*, *log* and *workers* directories will be automatically created in the root of your project, if they don't already exist
 
-4. Copy and rename the sample config file from the **@dadi/queue** module:
+4. Amend the configuration file *config/config.development.json* according to the following section
 
-   *config.development.json*
-
-5. Amend the config file according to the following section
-
-6. Require the **@dadi/queue** module from your project:
+5. Require the **@dadi/queue** module from your project:
 
    `require('@dadi/queue')`
 
-7. Run the project to start listening for messages:
+6. Run the project to start listening for messages:
 
    `npm start`
 
-## Config
+## Configuration
 
 * **queue**
   * **host**: (*ipaddress; default = 127.0.0.1*) The queue server host IP
@@ -136,6 +132,16 @@ A worker should export a function that receives 3 parameters:
   * `sent` : A Date object of when this message was sent
 * `queue` : An instance of the queue itself for sending further messages
 * `done`: A function to call when processing is complete
+
+**An example worker**
+```js
+// ./workers/hello-world.js
+
+module.exports = (req, queue, done) => {
+  console.log('hello world')
+  done()
+}
+```
 
 ### Success
 

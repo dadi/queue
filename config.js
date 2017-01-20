@@ -1,6 +1,9 @@
-var convict = require('convict')
+const convict = require('convict')
+const fs = require('fs')
+const mkdirp = require('mkdirp')
+const path = require('path')
 
-var conf = convict({
+const conf = convict({
   env: {
     doc: 'The applicaton environment',
     format: ['production', 'development', 'test'],
@@ -90,8 +93,26 @@ var conf = convict({
   }
 })
 
-var env = conf.get('env')
-conf.loadFile('config/config.' + env + '.json')
-conf.validate({ strict: true })
+function loadConfig () {
+  const configPath = path.join(process.cwd(), 'config/config.development.json')
+  const configSamplePath = path.join(__dirname, 'config/config.development.json.sample')
+  const sampleConfig = fs.readFileSync(configSamplePath, { encoding: 'utf-8'})
+
+  try {
+    var s = fs.readFileSync(configPath, { encoding: 'utf-8'})
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      var made = mkdirp.sync(path.join(process.cwd(), 'config'))
+      fs.writeFileSync(configPath, sampleConfig)
+      console.log('\nCreated configuration file at ' + configPath + '\n')
+    }
+  } finally {
+    const env = conf.get('env')
+    conf.loadFile('config/config.' + env + '.json')
+    conf.validate({ strict: true })
+  }
+}
+
+loadConfig()
 
 module.exports = conf
