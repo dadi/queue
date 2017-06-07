@@ -17,7 +17,7 @@
     "enabled": true,
     "level": "info",
     "path": "./log",
-    "filename": "error",
+    "filename": "myQueue",
     "extension": "log",
     "accessLog": {
       "enabled": false

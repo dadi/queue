@@ -1,2 +1,2 @@
-const app = require('./lib/app')
-module.exports = app()
+const QueueHandler = require('./lib/queue-handler')
+module.exports = new QueueHandler()
