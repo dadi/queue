@@ -45,9 +45,23 @@ const conf = convict({
       default: 30
     },
     throttle: {
-      doc: 'The number of workers that should execute concurrently',
-      format: Number,
-      default: 5
+      workers: {
+        doc: 'The number of workers that should execute concurrently',
+        format: Number,
+        default: 5
+      },
+      queue: {
+        unit: {
+          doc: 'The unit of measurement used for queue throttling',
+          format: ['second', 'minute', 'hour', 'day'],
+          default: 'minute'
+        },
+        value: {
+          doc: 'The value used for queue throttling. The rate will be limited to value/unit. Zero implies no limit.',
+          format: Number,
+          default: 0
+        }
+      }
     }
   },
   workers: {

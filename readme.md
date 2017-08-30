@@ -1,7 +1,7 @@
 # DADI Queue
 
 [![npm (scoped)](https://img.shields.io/npm/v/@dadi/queue.svg?maxAge=10800&style=flat-square)](https://www.npmjs.com/package/@dadi/queue)
-[![coverage](https://img.shields.io/badge/coverage-94%25-brightgreen.svg?style=flat-square)](https://github.com/dadi/queue)
+[![coverage](https://img.shields.io/badge/coverage-94%25-brightgreen.svg?style=flat?style=flat-square)](https://github.com/dadi/queue)
 [![Build Status](https://travis-ci.org/dadi/queue.svg?branch=master)](https://travis-ci.org/dadi/queue)
 [![JavaScript Style Guide](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](http://standardjs.com/)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
@@ -57,7 +57,11 @@ See the [Why do I need a task queue?](#why-do-i-need-a-task-queue) section for m
   * **interval**: (*array; default = [ 0, 1, 5, 10 ]*) The polling intervals of the message broker, in seconds
   * **retries**: (*number; default = 10*) The number of times a message will be retried after failing
   * **timeout**: (*number; default = 30*) The number of seconds until a message is placed back on the queue
-  * **throttle**: (*number; default = 5*) The number of workers that should execute concurrently
+  * **throttle**
+  * * **workers**: (*number; default = 5*) The number of workers that should execute concurrently
+  * * **queue**
+  * * * **unit**: (*string; default='second'; options=['second', 'minute', 'hour', 'day']*) The unit of measurement used for queue throttling
+  * * * **value**: (*number; default = 0*) The value used for queue throttling. The rate will be limited to value/unit. Zero implies no limit.
 * **workers**
   * **path**: (*string; default = './workers'*) The absolute or relative path to the directory for worker modules
 * **logging**
