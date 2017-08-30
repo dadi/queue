@@ -11,8 +11,8 @@
     "throttle": {
       "workers": 5,
       "queue": {
-        "throttle-unit": "second",
-        "throttle-value": 1
+        "unit": "second",
+        "value": 1
       }
     }
   },
