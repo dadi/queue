@@ -61,6 +61,11 @@ const conf = convict({
           format: Number,
           default: 0
         }
+      },
+      messages: {
+        doc: 'Message specific throttle limits',
+        format: '*',
+        default: {}
       }
     }
   },
