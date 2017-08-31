@@ -132,6 +132,36 @@ describe('Broker', function (done) {
       done()
     })
     
+    it('should not throttle messages processed if limit is zero', function (done) {
+      var messagesProcessed = []
+      var queueHandler = new QueueHandler()
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle', function (err, req, done) {
+        if (typeof done === 'function') {
+          if (messagesProcessed.indexOf(req.message) === -1) {
+            messagesProcessed.push(req.message)
+          }
+          req.address = 'hello'
+          done()
+        }
+      })
+      
+      queueHandler.queue.throttle.queue.value = 0
+      
+      for (var i = 0; i < 5; i++) {
+        fakeRsmq.emit('data', {
+          message: 'MSG-' + i,
+          address: 'hello',
+          sent: Date.now(),
+          rc: 1
+        })
+      }
+      
+      handlerStub.restore()
+      messagesProcessed.length.should.eql(5)
+      
+      done()
+    })
+    
     it('should throttle messages processed if limit is exceeded', function (done) {
       var messagesProcessed = []
       var queueHandler = new QueueHandler()
