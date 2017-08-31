@@ -60,8 +60,9 @@ See the [Why do I need a task queue?](#why-do-i-need-a-task-queue) section for m
   * **throttle**
   * * **workers**: (*number; default = 5*) The number of workers that should execute concurrently
   * * **queue**
-  * * * **unit**: (*string; default='second'; options=['second', 'minute', 'hour', 'day']*) The unit of measurement used for queue throttling
+  * * * **unit**: (*string; default = 'second'; options=['second', 'minute', 'hour', 'day']*) The unit of measurement used for queue throttling
   * * * **value**: (*number; default = 0*) The value used for queue throttling. The rate will be limited to value/unit. Zero implies no limit.
+  * * **messages** (*array; default = []) Message specific rate limiting, see below for specific format.
 * **workers**
   * **path**: (*string; default = './workers'*) The absolute or relative path to the directory for worker modules
 * **logging**
@@ -72,6 +73,73 @@ See the [Why do I need a task queue?](#why-do-i-need-a-task-queue) section for m
   * **extension**: (*string; default = 'log'*) The extension to use for the log file
   * **accessLog**
     * **enabled**: (*boolean; default = false*) Enable or disable access logging
+
+### Message specific rate limiting
+
+It is possible to rate limit message processing based on message content speifically. To do this, add configurations to `broker.throttle.messages` in the following format:
+
+```
+{
+  "name": "example-throttle",
+  "regex": "^example-.*$",
+  "regexOpts": "i",
+  "unit": "second",
+  "value": 1
+}
+```
+
+Example config with multiple message specific configurations:
+
+```
+{
+  "queue": {
+    "host": "127.0.0.1",
+    "port": 6379
+  },
+  "broker": {
+    "queue": "myqueue",
+    "interval": [ 0, 1, 5, 10 ],
+    "retries": 10,
+    "timeout": 30,
+    "throttle": {
+      "workers": 5,
+      "queue": {
+        "unit": "second",
+        "value": 1
+      },
+      "messages": [
+        {
+          "name": "ten-per-second",
+          "regex": "^tps-.*$",
+          "regexOpts": "i",
+          "unit": "second",
+          "value": 10
+        },
+        {
+          "name": "one-per-minute",
+          "regex": "^opm-.*$",
+          "regexOpts": "i",
+          "unit": "minute",
+          "value": 1
+        }
+      ]
+    }
+  },
+  "workers": {
+    "path": "./workers"
+  },
+  "logging": {
+    "enabled": true,
+    "level": "info",
+    "path": "./log",
+    "filename": "myQueue",
+    "extension": "log",
+    "accessLog": {
+      "enabled": false
+    }
+  }
+}
+```
 
 ## Sending messages
 
