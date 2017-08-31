@@ -118,7 +118,7 @@ describe('Throttle', function (done) {
         done()
       }
       
-      throttle.throttleQueueMessage(callback, callback)
+      throttle.throttleQueueMessage(null, callback, callback)
     })
     
     it('should throttle when queue message history exceeds limits', function (done) {
@@ -127,10 +127,10 @@ describe('Throttle', function (done) {
       throttleOpts.queue.value = 1
       var throttle = new Throttle(throttleOpts, function (start, stop) {})
       
-      throttle.throttleQueueMessage(function () {
+      throttle.throttleQueueMessage(null, function () {
         should.not.exist(this)
       }, function () {
-        throttle.throttleQueueMessage(function () {
+        throttle.throttleQueueMessage(null, function () {
           should.exist(this)
           done()
         }, function () {
@@ -145,10 +145,10 @@ describe('Throttle', function (done) {
       throttleOpts.queue.value = 2
       var throttle = new Throttle(throttleOpts, function (start, stop) {})
       
-      throttle.throttleQueueMessage(function () {
+      throttle.throttleQueueMessage(null, function () {
         should.not.exist(this)
       }, function () {
-        throttle.throttleQueueMessage(function () {
+        throttle.throttleQueueMessage(null, function () {
           should.not.exist(this)
         }, function () {
           should.exist(this)
@@ -167,7 +167,7 @@ describe('Throttle', function (done) {
       
       throttle.queue.history.push(Date.now() - 20 * 60 * 1000)
       throttle.queue.history.push(Date.now() - 10 * 60 * 1000)
-      throttle.pruneQueueHistory()
+      throttle.pruneQueueHistory(throttle.queue)
       
       throttle.queue.history.length.should.eql(0)
       done()
@@ -181,7 +181,7 @@ describe('Throttle', function (done) {
       
       throttle.queue.history.push(Date.now() - 30 * 1000)
       throttle.queue.history.push(Date.now() - 15 * 1000)
-      throttle.pruneQueueHistory()
+      throttle.pruneQueueHistory(throttle.queue)
       
       throttle.queue.history.length.should.eql(2)
       done()
