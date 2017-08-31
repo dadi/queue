@@ -53,7 +53,7 @@ const conf = convict({
       queue: {
         unit: {
           doc: 'The unit of measurement used for queue throttling',
-          format: ['second', 'minute', 'hour', 'day'],
+          format: ['second', 'minute', 'five-minute', 'quarter-hour', 'half-hour', 'hour', 'day'],
           default: 'minute'
         },
         value: {
