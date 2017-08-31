@@ -15,21 +15,26 @@ describe('Throttle', function (done) {
 
   describe('constructor', function () {
     it('should accept parameters and set defaults', function(done) {
-      var throttle = new Throttle(20, function(start, stop) {})
-      throttle.max.should.eql(20)
-      throttle.val.should.eql(0)
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.workers = 20
+      
+      var throttle = new Throttle(throttleOpts, function(start, stop) {})
+      throttle.workers.limit.should.eql(throttleOpts.workers)
+      throttle.workers.count.should.eql(0)
 
       done()
     })
   })
 
-  describe('less', function () {
-    it('should call adjust with the specified parameter', function(done) {
-      var throttle = new Throttle(20, function(start, stop) {})
+  describe('decreaseWorkerCount', function () {
+    it('should call adjustWorkerCount with the specified parameter', function(done) {
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.workers = 20
+      
+      var throttle = new Throttle(throttleOpts, function(start, stop) {})
+      var spy = sinon.spy(throttle, 'adjustWorkerCount')
 
-      var spy = sinon.spy(throttle, 'adjust')
-
-      throttle.less()
+      throttle.decreaseWorkerCount()
       spy.restore()
 
       spy.called.should.eql(true)
@@ -39,13 +44,15 @@ describe('Throttle', function (done) {
     })
   })
 
-  describe('more', function () {
-    it('should call adjust with the specified parameter', function(done) {
-      var throttle = new Throttle(20, function(start, stop) {})
+  describe('increaseWorkerCount', function () {
+    it('should call adjustWorkerCount with the specified parameter', function(done) {
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.workers = 20
+      
+      var throttle = new Throttle(throttleOpts, function(start, stop) {})
+      var spy = sinon.spy(throttle, 'adjustWorkerCount')
 
-      var spy = sinon.spy(throttle, 'adjust')
-
-      throttle.more()
+      throttle.increaseWorkerCount()
       spy.restore()
 
       spy.called.should.eql(true)
@@ -55,12 +62,15 @@ describe('Throttle', function (done) {
     })
   })
 
-  describe('adjust', function () {
+  describe('adjustWorkerCount', function () {
     it('should update the internal value when the adjustment is greater than 0 and less than max', function(done) {
-      var throttle = new Throttle(20, function(start, stop) {})
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.workers = 20
+      
+      var throttle = new Throttle(throttleOpts, function(start, stop) {})
 
-      throttle.adjust(1)
-      throttle.val.should.eql(1)
+      throttle.adjustWorkerCount(1)
+      throttle.workers.count.should.eql(1)
 
       done()
     })
@@ -71,10 +81,12 @@ describe('Throttle', function (done) {
         stop.should.eql(true)
         done()
       }
+      
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.workers = 20
 
-      var throttle = new Throttle(20, engine)
-
-      throttle.adjust(20)
+      var throttle = new Throttle(throttleOpts, engine)
+      throttle.adjustWorkerCount(20)
     })
 
     it('should fire the engine callback with START if the adjustment value equals the max value and we throttled back', function(done) {
@@ -84,10 +96,12 @@ describe('Throttle', function (done) {
         done()
       }
 
-      var throttle = new Throttle(20, engine)
-      throttle.val = 21
-
-      throttle.adjust(-1)
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.workers = 20
+      
+      var throttle = new Throttle(throttleOpts, engine)
+      throttle.workers.count = 21
+      throttle.adjustWorkerCount(-1)
     })
   })
 })

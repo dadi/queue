@@ -88,7 +88,7 @@ describe('Broker', function (done) {
       var spy = sinon.spy(fakeRsmq, 'start')
 
       // change the message count in the throttle
-      queueHandler.queue.throttle.val = 5
+      queueHandler.queue.throttle.workers.count = 5
 
       fakeRsmq.emit('data', msg)
 
@@ -119,7 +119,7 @@ describe('Broker', function (done) {
       var spy = sinon.spy(fakeRsmq, 'stop')
 
       // change the message count in the throttle
-      queueHandler.queue.throttle.val = 5
+      queueHandler.queue.throttle.workers.count = 5
 
       fakeRsmq.emit('message', msg, function() {
 
