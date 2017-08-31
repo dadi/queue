@@ -232,6 +232,67 @@ describe('Broker', function (done) {
       
       emitAndWait()
     })
+    
+    it('should throttle specific messages processed if limit is exceeded', function (done) {
+      var messagesProcessed = []
+      var queueHandler = new QueueHandler()
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle', function (err, req, done) {
+        if (typeof done === 'function') {
+          if (messagesProcessed.indexOf(req.message) === -1) {
+            messagesProcessed.push(req.message)
+          }
+          req.address = 'hello'
+          done()
+        }
+      })
+      
+      // add a message-specific limit of 5/second for 
+      // messages beginning with "fps-"
+      queueHandler.queue.throttle.messages.push({
+        name: 'five-per-second',
+        regex: 'fps-.*',
+        regexOpts: 'i',
+        unit: 'second',
+        value: 5
+      })
+      
+      // add a message-specific limit of 1/minute for 
+      // messages beginning with "opm-"
+      queueHandler.queue.throttle.messages.push({
+        name: 'one-per-minute',
+        regex: 'opm-.*',
+        regexOpts: 'i',
+        unit: 'minute',
+        value: 1
+      })
+      
+      // emit 10 messages starting with "fps-"
+      for (var i = 0; i < 10; i++) {
+        fakeRsmq.emit('data', {
+          message: 'fps-' + i,
+          address: 'hello',
+          sent: Date.now(),
+          rc: 1
+        })
+      }
+      
+      // emit 5 messages starting with "ops-"
+      for (var i = 0; i < 5; i++) {
+        fakeRsmq.emit('data', {
+          message: 'opm-' + i,
+          address: 'hello',
+          sent: Date.now(),
+          rc: 1
+        })
+      }
+      
+      handlerStub.restore()
+      
+      // we should only see 6 – five for fps, and one for opm
+      messagesProcessed.length.should.eql(6)
+      
+      done()
+    })
 
     it('should handle error events, passing the error to the QueueHandler', function(done) {
       var msg = {
