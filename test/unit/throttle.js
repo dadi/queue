@@ -112,6 +112,8 @@ describe('Throttle', function (done) {
   describe('throttleQueueMessage', function () {
     it('should track queue message history', function (done) {
       var throttleOpts = config.get('broker.throttle')
+      throttleOpts.queue.unit = 'second'
+      throttleOpts.queue.value = 1
       var throttle = new Throttle(throttleOpts, function (start, stop) {})
       var callback = function () {
         throttle.queue.history.length.should.eql(1)
