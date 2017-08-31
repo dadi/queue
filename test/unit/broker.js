@@ -131,6 +131,77 @@ describe('Broker', function (done) {
       spy.calledOnce.should.eql(true)
       done()
     })
+    
+    it('should throttle messages processed if limit is exceeded', function (done) {
+      var messagesProcessed = []
+      var queueHandler = new QueueHandler()
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle', function (err, req, done) {
+        if (typeof done === 'function') {
+          if (messagesProcessed.indexOf(req.message) === -1) {
+            messagesProcessed.push(req.message)
+          }
+          req.address = 'hello'
+          done()
+        }
+      })
+      
+      queueHandler.queue.throttle.queue.unit = 'minute'
+      queueHandler.queue.throttle.queue.value = 10
+      
+      for (var i = 0; i < 20; i++) {
+        fakeRsmq.emit('data', {
+          message: 'MSG-' + i,
+          address: 'hello',
+          sent: Date.now(),
+          rc: 1
+        })
+      }
+      
+      handlerStub.restore()
+      messagesProcessed.length.should.eql(10)
+      
+      done()
+    })
+    
+    it('should throttle messages processed over time', function (done) {
+      this.timeout(3000)
+      
+      var emitCount = 0
+      var messagesProcessed = []
+      var queueHandler = new QueueHandler()
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle', function (err, req, done) {
+        if (typeof done === 'function') {
+          if (messagesProcessed.indexOf(req.message) === -1) {
+            messagesProcessed.push(req.message)
+          }
+          req.address = 'hello'
+          done()
+        }
+      })
+      
+      queueHandler.queue.throttle.queue.unit = 'second'
+      queueHandler.queue.throttle.queue.value = 1
+      
+      function emitAndWait() {
+        fakeRsmq.emit('data', {
+          message: 'MSG-' + emitCount,
+          address: 'hello',
+          sent: Date.now(),
+          rc: 1
+        })
+        emitCount++
+        
+        if (emitCount < 10) {
+          setTimeout(emitAndWait, 250)
+        } else {
+          handlerStub.restore()
+          messagesProcessed.length.should.eql(3)
+          done()
+        }
+      }
+      
+      emitAndWait()
+    })
 
     it('should handle error events, passing the error to the QueueHandler', function(done) {
       var msg = {
