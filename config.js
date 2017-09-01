@@ -62,6 +62,11 @@ const conf = convict({
           doc: 'The value used for queue throttling. The rate will be limited to value/unit. Zero implies no limit.',
           format: Number,
           default: 0
+        },
+        discard: {
+          doc: 'Whether or not to discard throttled messages',
+          format: Boolean,
+          default: false
         }
       },
       messages: {
