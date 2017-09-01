@@ -1,3 +1,5 @@
+'use strict'
+
 const convict = require('convict')
 const fs = require('fs')
 const mkdirp = require('mkdirp')
@@ -118,17 +120,17 @@ function loadConfig () {
   const sampleConfig = fs.readFileSync(configSamplePath, { encoding: 'utf-8'})
 
   try {
-    var s = fs.readFileSync(configPath, { encoding: 'utf-8'})
+    let s = fs.readFileSync(configPath, { encoding: 'utf-8'})
   } catch (err) {
     if (err.code === 'ENOENT') {
-      var made = mkdirp.sync(path.join(process.cwd(), 'config'))
+      let made = mkdirp.sync(path.join(process.cwd(), 'config'))
       fs.writeFileSync(configPath, sampleConfig)
       console.log('\nCreated configuration file at ' + configPath + '\n')
     }
   } finally {
     const env = conf.get('env')
     conf.loadFile('config/config.' + env + '.json')
-    conf.validate({ strict: true })
+    conf.validate()
   }
 }
 
