@@ -62,6 +62,7 @@ See the [Why do I need a task queue?](#why-do-i-need-a-task-queue) section for m
   * * **queue**
   * * * **unit**: (*string; default = 'second'; options=['second', 'minute', 'hour', 'day']*) The unit of measurement used for queue throttling
   * * * **value**: (*number; default = 0*) The value used for queue throttling. The rate will be limited to value/unit. Zero implies no limit.
+  * * * **discard**: (*boolean: default = false*) Whether or not to discard throttled messages
   * * **messages** (*array; default = []) Message specific rate limiting, see below for specific format.
 * **workers**
   * **path**: (*string; default = './workers'*) The absolute or relative path to the directory for worker modules
@@ -84,7 +85,8 @@ It is possible to rate limit message processing based on message content speific
   "regex": "^example-.*$",
   "regexOpts": "i",
   "unit": "second",
-  "value": 1
+  "value": 1,
+  "discard": true
 }
 ```
 
@@ -113,7 +115,8 @@ Example config with multiple message specific configurations:
           "regex": "^tps-.*$",
           "regexOpts": "i",
           "unit": "second",
-          "value": 10
+          "value": 10,
+          "discard": true
         },
         {
           "name": "one-per-minute",
