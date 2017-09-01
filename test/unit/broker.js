@@ -12,7 +12,7 @@ var QueueHandler = require(path.join(__dirname, '../../lib/queue-handler'))
 
 var FakeRsmq = function() {
   this.del = function() {
-
+    
   }
 
   this.start = function() {
@@ -294,6 +294,86 @@ describe('Broker', function (done) {
       done()
     })
 
+    it('should discard throttled messages if discard is set to true', function (done) {
+      var messagesProcessed = []
+      var messagesDiscarded = []
+      var queueHandler = new QueueHandler()
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle').callsFake(function (err, req, done) {
+        if (typeof done === 'function') {
+          if (messagesProcessed.indexOf(req.id) === -1) {
+            messagesProcessed.push(req.id)
+          }
+          req.address = 'hello'
+          done()
+        }
+      })
+
+      queueHandler.queue.rsmq.del = function (msgId) {
+        if (messagesProcessed.indexOf(msgId) === -1) {
+          messagesDiscarded.push(msgId)
+        }
+      }
+      queueHandler.queue.throttle.queue.unit = 'minute'
+      queueHandler.queue.throttle.queue.value = 1
+      queueHandler.queue.throttle.queue.discard = true
+
+      for (var i = 0; i < 5; i++) {
+        fakeRsmq.emit('data', {
+          id: 'MSG-' + i,
+          message: 'MSG-' + i,
+          address: 'hello',
+          sent: Date.now(),
+          rc: 1
+        })
+      }
+
+      handlerStub.restore()
+      messagesProcessed.length.should.eql(1)
+      messagesDiscarded.length.should.eql(4)
+
+      done()
+    })
+    
+    it('should not discard throttled messages if discard is set to false', function (done) {
+      var messagesProcessed = []
+      var messagesDiscarded = []
+      var queueHandler = new QueueHandler()
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle').callsFake(function (err, req, done) {
+        if (typeof done === 'function') {
+          if (messagesProcessed.indexOf(req.id) === -1) {
+            messagesProcessed.push(req.id)
+          }
+          req.address = 'hello'
+          done()
+        }
+      })
+
+      queueHandler.queue.rsmq.del = function (msgId) {
+        if (messagesProcessed.indexOf(msgId) === -1) {
+          messagesDiscarded.push(msgId)
+        }
+      }
+      queueHandler.queue.throttle.queue.unit = 'minute'
+      queueHandler.queue.throttle.queue.value = 1
+      queueHandler.queue.throttle.queue.discard = false
+
+      for (var i = 0; i < 5; i++) {
+        fakeRsmq.emit('data', {
+          id: 'MSG-' + i,
+          message: 'MSG-' + i,
+          address: 'hello',
+          sent: Date.now(),
+          rc: 1
+        })
+      }
+
+      handlerStub.restore()
+      messagesProcessed.length.should.eql(1)
+      messagesDiscarded.length.should.eql(0)
+
+      done()
+    })
+    
     it('should handle error events, passing the error to the QueueHandler', function(done) {
       var msg = {
         message: 'XXX'
