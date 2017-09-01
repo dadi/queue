@@ -7,11 +7,11 @@ const colors = require('colors')
 const testConfigPath = './config/config.test.json'
 const testConfigSamplePath = './config/config.development.json.sample'
 
-let testConfigSample = fs.readFileSync(testConfigSamplePath, { encoding: 'utf-8'})
+const testConfigSample = fs.readFileSync(testConfigSamplePath, { encoding: 'utf-8'})
 
 function loadConfig () {
   try {
-    let testConfig = fs.readFileSync(testConfigPath, { encoding: 'utf-8'})
+    const testConfig = fs.readFileSync(testConfigPath, { encoding: 'utf-8'})
     return JSON.parse(testConfig)
   } catch (err) {
     if (err.code === 'ENOENT') {

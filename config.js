@@ -120,10 +120,10 @@ function loadConfig () {
   const sampleConfig = fs.readFileSync(configSamplePath, { encoding: 'utf-8'})
 
   try {
-    let s = fs.readFileSync(configPath, { encoding: 'utf-8'})
+    const s = fs.readFileSync(configPath, { encoding: 'utf-8'})
   } catch (err) {
     if (err.code === 'ENOENT') {
-      let made = mkdirp.sync(path.join(process.cwd(), 'config'))
+      const made = mkdirp.sync(path.join(process.cwd(), 'config'))
       fs.writeFileSync(configPath, sampleConfig)
       console.log('\nCreated configuration file at ' + configPath + '\n')
     }
