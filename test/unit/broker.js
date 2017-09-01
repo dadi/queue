@@ -78,7 +78,7 @@ describe('Broker', function (done) {
 
       var queueHandler = new QueueHandler()
 
-      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle', function (err, req, done) {
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle').callsFake(function (err, req, done) {
         if (typeof done === 'function') {
           req.address = 'hello'
           done()
@@ -109,7 +109,7 @@ describe('Broker', function (done) {
 
       var queueHandler = new QueueHandler()
 
-      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle', function (err, req, done) {
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle').callsFake(function (err, req, done) {
         if (typeof done === 'function') {
           req.address = 'hello'
           done()
@@ -131,11 +131,11 @@ describe('Broker', function (done) {
       spy.calledOnce.should.eql(true)
       done()
     })
-    
+
     it('should not throttle messages processed if limit is zero', function (done) {
       var messagesProcessed = []
       var queueHandler = new QueueHandler()
-      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle', function (err, req, done) {
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle').callsFake(function (err, req, done) {
         if (typeof done === 'function') {
           if (messagesProcessed.indexOf(req.message) === -1) {
             messagesProcessed.push(req.message)
@@ -144,9 +144,9 @@ describe('Broker', function (done) {
           done()
         }
       })
-      
+
       queueHandler.queue.throttle.queue.value = 0
-      
+
       for (var i = 0; i < 5; i++) {
         fakeRsmq.emit('data', {
           message: 'MSG-' + i,
@@ -155,17 +155,17 @@ describe('Broker', function (done) {
           rc: 1
         })
       }
-      
+
       handlerStub.restore()
       messagesProcessed.length.should.eql(5)
-      
+
       done()
     })
-    
+
     it('should throttle messages processed if limit is exceeded', function (done) {
       var messagesProcessed = []
       var queueHandler = new QueueHandler()
-      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle', function (err, req, done) {
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle').callsFake(function (err, req, done) {
         if (typeof done === 'function') {
           if (messagesProcessed.indexOf(req.message) === -1) {
             messagesProcessed.push(req.message)
@@ -174,10 +174,10 @@ describe('Broker', function (done) {
           done()
         }
       })
-      
+
       queueHandler.queue.throttle.queue.unit = 'minute'
       queueHandler.queue.throttle.queue.value = 10
-      
+
       for (var i = 0; i < 20; i++) {
         fakeRsmq.emit('data', {
           message: 'MSG-' + i,
@@ -186,20 +186,20 @@ describe('Broker', function (done) {
           rc: 1
         })
       }
-      
+
       handlerStub.restore()
       messagesProcessed.length.should.eql(10)
-      
+
       done()
     })
-    
+
     it('should throttle messages processed over time', function (done) {
       this.timeout(3000)
-      
+
       var emitCount = 0
       var messagesProcessed = []
       var queueHandler = new QueueHandler()
-      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle', function (err, req, done) {
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle').callsFake(function (err, req, done) {
         if (typeof done === 'function') {
           if (messagesProcessed.indexOf(req.message) === -1) {
             messagesProcessed.push(req.message)
@@ -208,10 +208,10 @@ describe('Broker', function (done) {
           done()
         }
       })
-      
+
       queueHandler.queue.throttle.queue.unit = 'second'
       queueHandler.queue.throttle.queue.value = 1
-      
+
       function emitAndWait() {
         fakeRsmq.emit('data', {
           message: 'MSG-' + emitCount,
@@ -220,7 +220,7 @@ describe('Broker', function (done) {
           rc: 1
         })
         emitCount++
-        
+
         if (emitCount < 10) {
           setTimeout(emitAndWait, 250)
         } else {
@@ -229,14 +229,14 @@ describe('Broker', function (done) {
           done()
         }
       }
-      
+
       emitAndWait()
     })
-    
+
     it('should throttle specific messages processed if limit is exceeded', function (done) {
       var messagesProcessed = []
       var queueHandler = new QueueHandler()
-      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle', function (err, req, done) {
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle').callsFake(function (err, req, done) {
         if (typeof done === 'function') {
           if (messagesProcessed.indexOf(req.message) === -1) {
             messagesProcessed.push(req.message)
@@ -245,8 +245,8 @@ describe('Broker', function (done) {
           done()
         }
       })
-      
-      // add a message-specific limit of 5/second for 
+
+      // add a message-specific limit of 5/second for
       // messages beginning with "fps-"
       queueHandler.queue.throttle.messages.push({
         name: 'five-per-second',
@@ -255,8 +255,8 @@ describe('Broker', function (done) {
         unit: 'second',
         value: 5
       })
-      
-      // add a message-specific limit of 1/minute for 
+
+      // add a message-specific limit of 1/minute for
       // messages beginning with "opm-"
       queueHandler.queue.throttle.messages.push({
         name: 'one-per-minute',
@@ -265,7 +265,7 @@ describe('Broker', function (done) {
         unit: 'minute',
         value: 1
       })
-      
+
       // emit 10 messages starting with "fps-"
       for (var i = 0; i < 10; i++) {
         fakeRsmq.emit('data', {
@@ -275,7 +275,7 @@ describe('Broker', function (done) {
           rc: 1
         })
       }
-      
+
       // emit 5 messages starting with "ops-"
       for (var i = 0; i < 5; i++) {
         fakeRsmq.emit('data', {
@@ -285,12 +285,12 @@ describe('Broker', function (done) {
           rc: 1
         })
       }
-      
+
       handlerStub.restore()
-      
+
       // we should only see 6 – five for fps, and one for opm
       messagesProcessed.length.should.eql(6)
-      
+
       done()
     })
 
@@ -346,7 +346,7 @@ describe('Broker', function (done) {
 
       var queueHandler = new QueueHandler()
 
-      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle', function (err, req, done) {
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle').callsFake(function (err, req, done) {
         if (typeof done === 'function') {
           req.address = 'hello'
           done()
@@ -371,7 +371,7 @@ describe('Broker', function (done) {
     it('should create a WorkerError when an error is returned by the QueueHandler', function (done) {
       queueHandler = new QueueHandler()
 
-      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle', function (err, req, done) {
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle').callsFake(function (err, req, done) {
         if (typeof done === 'function') {
           req.address = 'hello'
           done('ERROR')
@@ -398,7 +398,7 @@ describe('Broker', function (done) {
     it('should create an ExceededError when an error is returned by the QueueHandler and there are no retries left', function (done) {
       queueHandler = new QueueHandler()
 
-      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle', function (err, req, done) {
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle').callsFake(function (err, req, done) {
         if (typeof done === 'function') {
           req.address = 'hello'
           delete req.retries
@@ -425,7 +425,7 @@ describe('Broker', function (done) {
     it('should create an InvalidError when an returned message has no address', function (done) {
       queueHandler = new QueueHandler()
 
-      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle', function (err, req, done) {
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle').callsFake(function (err, req, done) {
         if (typeof done === 'function') {
           req.address = []
           done('ERROR')
@@ -451,7 +451,7 @@ describe('Broker', function (done) {
     it('should create a TimeoutError when a message timeout has passed', function (done) {
       queueHandler = new QueueHandler()
 
-      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle', function (err, req, done) {
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle').callsFake(function (err, req, done) {
         if (typeof done === 'function') {
           req.address = 'hello'
           req.timeout = 1000
@@ -478,7 +478,7 @@ describe('Broker', function (done) {
     it('should return true if no error', function (done) {
       queueHandler = new QueueHandler()
 
-      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle', function (err, req, done) {
+      var handlerStub = sinon.stub(QueueHandler.prototype, 'handle').callsFake(function (err, req, done) {
         if (typeof done === 'function') {
           req.address = 'hello'
           done()
