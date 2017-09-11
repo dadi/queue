@@ -1,15 +1,17 @@
-var fs = require('fs')
-var path = require('path')
-var colors = require('colors')
+'use strict'
 
-var testConfigPath = './config/config.test.json'
-var testConfigSamplePath = './config/config.development.json.sample'
+const fs = require('fs')
+const path = require('path')
+const colors = require('colors')
 
-var testConfigSample = fs.readFileSync(testConfigSamplePath, { encoding: 'utf-8'})
+const testConfigPath = './config/config.test.json'
+const testConfigSamplePath = './config/config.development.json.sample'
+
+const testConfigSample = fs.readFileSync(testConfigSamplePath, { encoding: 'utf-8'})
 
 function loadConfig () {
   try {
-    var testConfig = fs.readFileSync(testConfigPath, { encoding: 'utf-8'})
+    const testConfig = fs.readFileSync(testConfigPath, { encoding: 'utf-8'})
     return JSON.parse(testConfig)
   } catch (err) {
     if (err.code === 'ENOENT') {

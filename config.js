@@ -1,3 +1,5 @@
+'use strict'
+
 const convict = require('convict')
 const fs = require('fs')
 const mkdirp = require('mkdirp')
@@ -45,9 +47,33 @@ const conf = convict({
       default: 30
     },
     throttle: {
-      doc: 'The number of workers that should execute concurrently',
-      format: Number,
-      default: 5
+      workers: {
+        doc: 'The number of workers that should execute concurrently',
+        format: Number,
+        default: 5
+      },
+      queue: {
+        unit: {
+          doc: 'The unit of measurement used for queue throttling',
+          format: ['second', 'minute', 'five-minute', 'quarter-hour', 'half-hour', 'hour', 'day'],
+          default: 'minute'
+        },
+        value: {
+          doc: 'The value used for queue throttling. The rate will be limited to value/unit. Zero implies no limit.',
+          format: Number,
+          default: 0
+        },
+        discard: {
+          doc: 'Whether or not to discard throttled messages',
+          format: Boolean,
+          default: false
+        }
+      },
+      messages: {
+        doc: 'Message specific throttle limits',
+        format: '*',
+        default: {}
+      }
     }
   },
   workers: {
@@ -99,17 +125,17 @@ function loadConfig () {
   const sampleConfig = fs.readFileSync(configSamplePath, { encoding: 'utf-8'})
 
   try {
-    var s = fs.readFileSync(configPath, { encoding: 'utf-8'})
+    const s = fs.readFileSync(configPath, { encoding: 'utf-8'})
   } catch (err) {
     if (err.code === 'ENOENT') {
-      var made = mkdirp.sync(path.join(process.cwd(), 'config'))
+      const made = mkdirp.sync(path.join(process.cwd(), 'config'))
       fs.writeFileSync(configPath, sampleConfig)
       console.log('\nCreated configuration file at ' + configPath + '\n')
     }
   } finally {
     const env = conf.get('env')
     conf.loadFile('config/config.' + env + '.json')
-    conf.validate({ strict: true })
+    conf.validate()
   }
 }
 

@@ -8,7 +8,11 @@
     "interval": [ 0, 1, 5, 10 ],
     "retries": 10,
     "timeout": 30,
-    "throttle": 5
+    "throttle": {
+      "workers": 5,
+      "queue": {},
+      "messages": []
+    }
   },
   "workers": {
     "path": "./workers"
