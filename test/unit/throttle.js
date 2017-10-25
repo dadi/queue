@@ -15,21 +15,30 @@ describe('Throttle', function (done) {
 
   describe('constructor', function () {
     it('should accept parameters and set defaults', function(done) {
-      var throttle = new Throttle(20, function(start, stop) {})
-      throttle.max.should.eql(20)
-      throttle.val.should.eql(0)
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.workers = 20
+      throttleOpts.queue.unit = 'minute'
+      throttleOpts.queue.value = 30
+
+      var throttle = new Throttle(throttleOpts, function(start, stop) {})
+      throttle.workers.limit.should.eql(throttleOpts.workers)
+      throttle.workers.count.should.eql(0)
+      throttle.queue.unit.should.eql(throttleOpts.queue.unit)
+      throttle.queue.value.should.eql(throttleOpts.queue.value)
 
       done()
     })
   })
 
-  describe('less', function () {
-    it('should call adjust with the specified parameter', function(done) {
-      var throttle = new Throttle(20, function(start, stop) {})
+  describe('decreaseWorkerCount', function () {
+    it('should call adjustWorkerCount with the specified parameter', function(done) {
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.workers = 20
 
-      var spy = sinon.spy(throttle, 'adjust')
+      var throttle = new Throttle(throttleOpts, function(start, stop) {})
+      var spy = sinon.spy(throttle, 'adjustWorkerCount')
 
-      throttle.less()
+      throttle.decreaseWorkerCount()
       spy.restore()
 
       spy.called.should.eql(true)
@@ -39,13 +48,15 @@ describe('Throttle', function (done) {
     })
   })
 
-  describe('more', function () {
-    it('should call adjust with the specified parameter', function(done) {
-      var throttle = new Throttle(20, function(start, stop) {})
+  describe('increaseWorkerCount', function () {
+    it('should call adjustWorkerCount with the specified parameter', function(done) {
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.workers = 20
 
-      var spy = sinon.spy(throttle, 'adjust')
+      var throttle = new Throttle(throttleOpts, function(start, stop) {})
+      var spy = sinon.spy(throttle, 'adjustWorkerCount')
 
-      throttle.more()
+      throttle.increaseWorkerCount()
       spy.restore()
 
       spy.called.should.eql(true)
@@ -55,12 +66,15 @@ describe('Throttle', function (done) {
     })
   })
 
-  describe('adjust', function () {
+  describe('adjustWorkerCount', function () {
     it('should update the internal value when the adjustment is greater than 0 and less than max', function(done) {
-      var throttle = new Throttle(20, function(start, stop) {})
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.workers = 20
 
-      throttle.adjust(1)
-      throttle.val.should.eql(1)
+      var throttle = new Throttle(throttleOpts, function(start, stop) {})
+
+      throttle.adjustWorkerCount(1)
+      throttle.workers.count.should.eql(1)
 
       done()
     })
@@ -72,9 +86,11 @@ describe('Throttle', function (done) {
         done()
       }
 
-      var throttle = new Throttle(20, engine)
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.workers = 20
 
-      throttle.adjust(20)
+      var throttle = new Throttle(throttleOpts, engine)
+      throttle.adjustWorkerCount(20)
     })
 
     it('should fire the engine callback with START if the adjustment value equals the max value and we throttled back', function(done) {
@@ -84,10 +100,177 @@ describe('Throttle', function (done) {
         done()
       }
 
-      var throttle = new Throttle(20, engine)
-      throttle.val = 21
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.workers = 20
 
-      throttle.adjust(-1)
+      var throttle = new Throttle(throttleOpts, engine)
+      throttle.workers.count = 21
+      throttle.adjustWorkerCount(-1)
+    })
+  })
+
+  describe('throttleQueueMessage', function () {
+    it('should track queue message history', function (done) {
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.queue.unit = 'second'
+      throttleOpts.queue.value = 1
+      var throttle = new Throttle(throttleOpts, function (start, stop) {})
+      var callback = function () {
+        throttle.queue.history.length.should.eql(1)
+        done()
+      }
+
+      throttle.throttleQueueMessage(null, callback, callback)
+    })
+
+    it('should throttle when queue message history exceeds limits', function (done) {
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.queue.unit = 'second'
+      throttleOpts.queue.value = 1
+      var throttle = new Throttle(throttleOpts, function (start, stop) {})
+
+      throttle.throttleQueueMessage(null, function () {
+        should.not.exist(this)
+      }, function () {
+        throttle.throttleQueueMessage(null, function () {
+          should.exist(this)
+          done()
+        }, function () {
+          should.not.exist(this)
+        })
+      })
+    })
+
+    it('should not throttle when queue message history does not exceeds limits', function (done) {
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.queue.unit = 'second'
+      throttleOpts.queue.value = 2
+      var throttle = new Throttle(throttleOpts, function (start, stop) {})
+
+      throttle.throttleQueueMessage(null, function () {
+        should.not.exist(this)
+      }, function () {
+        throttle.throttleQueueMessage(null, function () {
+          should.not.exist(this)
+        }, function () {
+          should.exist(this)
+          done()
+        })
+      })
+    })
+  })
+
+  describe('pruneQueueHistory', function () {
+    it('should remove expired queue message timestamps when unit is "second"', function (done) {
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.queue.unit = 'second'
+      throttleOpts.queue.value = 1
+      var throttle = new Throttle(throttleOpts, function (start, stop) {})
+
+      throttle.queue.history.push(Date.now() - 20 * 60 * 1000)
+      throttle.queue.history.push(Date.now() - 10 * 60 * 1000)
+      throttle.pruneQueueHistory(throttle.queue)
+
+      throttle.queue.history.length.should.eql(0)
+      done()
+    })
+
+    it('should remove expired queue message timestamps when unit is "minute"', function (done) {
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.queue.unit = 'minute'
+      throttleOpts.queue.value = 1
+      var throttle = new Throttle(throttleOpts, function (start, stop) {})
+
+      throttle.queue.history.push(Date.now() - 20 * 60 * 1000)
+      throttle.queue.history.push(Date.now() - 10 * 60 * 1000)
+      throttle.pruneQueueHistory(throttle.queue)
+
+      throttle.queue.history.length.should.eql(0)
+      done()
+    })
+
+    it('should remove expired queue message timestamps when unit is "five-minute"', function (done) {
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.queue.unit = 'five-minute'
+      throttleOpts.queue.value = 1
+      var throttle = new Throttle(throttleOpts, function (start, stop) {})
+
+      throttle.queue.history.push(Date.now() - 20 * 60 * 1000)
+      throttle.queue.history.push(Date.now() - 10 * 60 * 1000)
+      throttle.pruneQueueHistory(throttle.queue)
+
+      throttle.queue.history.length.should.eql(0)
+      done()
+    })
+
+    it('should remove expired queue message timestamps when unit is "quarter-hour"', function (done) {
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.queue.unit = 'quarter-hour'
+      throttleOpts.queue.value = 1
+      var throttle = new Throttle(throttleOpts, function (start, stop) {})
+
+      throttle.queue.history.push(Date.now() - 16 * 60 * 1000)
+      throttle.queue.history.push(Date.now() - 17 * 60 * 1000)
+      throttle.pruneQueueHistory(throttle.queue)
+
+      throttle.queue.history.length.should.eql(0)
+      done()
+    })
+
+    it('should remove expired queue message timestamps when unit is "half-hour"', function (done) {
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.queue.unit = 'half-hour'
+      throttleOpts.queue.value = 1
+      var throttle = new Throttle(throttleOpts, function (start, stop) {})
+
+      throttle.queue.history.push(Date.now() - 31 * 60 * 1000)
+      throttle.queue.history.push(Date.now() - 45 * 60 * 1000)
+      throttle.pruneQueueHistory(throttle.queue)
+
+      throttle.queue.history.length.should.eql(0)
+      done()
+    })
+
+    it('should remove expired queue message timestamps when unit is "hour"', function (done) {
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.queue.unit = 'hour'
+      throttleOpts.queue.value = 1
+      var throttle = new Throttle(throttleOpts, function (start, stop) {})
+
+      throttle.queue.history.push(Date.now() - 61 * 60 * 1000)
+      throttle.queue.history.push(Date.now() - 90 * 60 * 1000)
+      throttle.pruneQueueHistory(throttle.queue)
+
+      throttle.queue.history.length.should.eql(0)
+      done()
+    })
+
+    it('should remove expired queue message timestamps when unit is "day"', function (done) {
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.queue.unit = 'day'
+      throttleOpts.queue.value = 1
+      var throttle = new Throttle(throttleOpts, function (start, stop) {})
+
+      throttle.queue.history.push(Date.now() - 24.1 * 60 * 60 * 1000)
+      throttle.queue.history.push(Date.now() - 25 * 60 * 60 * 1000)
+      throttle.pruneQueueHistory(throttle.queue)
+
+      throttle.queue.history.length.should.eql(0)
+      done()
+    })
+
+    it('should not remove non-expired queue message timestamps', function (done) {
+      var throttleOpts = config.get('broker.throttle')
+      throttleOpts.queue.unit = 'minute'
+      throttleOpts.queue.value = 1
+      var throttle = new Throttle(throttleOpts, function (start, stop) {})
+
+      throttle.queue.history.push(Date.now() - 30 * 1000)
+      throttle.queue.history.push(Date.now() - 15 * 1000)
+      throttle.pruneQueueHistory(throttle.queue)
+
+      throttle.queue.history.length.should.eql(2)
+      done()
     })
   })
 })
