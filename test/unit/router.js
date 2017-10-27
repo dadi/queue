@@ -57,5 +57,74 @@ describe('Router', function (done) {
       should.not.exist(worker)
       done()
     })
+
+    it('should not decode an unencapsulated primitive base64 message', function(done) {
+      config.set('workers.path', path.resolve(path.join(__dirname, '../workers')))
+
+      // hello world
+      // aGVsbG8gd29ybGQ=
+
+      var req = {
+        message: 'hello-world:aGVsbG8gd29ybGQ='
+      }
+
+      var router = new Router()
+      var worker = router.getWorker(req)
+      should.exist(req.data)
+      req.data.should.equal('aGVsbG8gd29ybGQ=')
+      done()
+    })
+
+    it('should unpack an encapsulated primitive base64 message', function(done) {
+      config.set('workers.path', path.resolve(path.join(__dirname, '../workers')))
+
+      // hello world
+      // aGVsbG8gd29ybGQ=
+
+      var req = {
+        message: 'hello-world:[[aGVsbG8gd29ybGQ=]]'
+      }
+
+      var router = new Router()
+      var worker = router.getWorker(req)
+      should.exist(req.data)
+      req.data.should.equal('hello world')
+      done()
+    })
+
+    it('should not decode an unencapsulated json base64 message', function(done) {
+      config.set('workers.path', path.resolve(path.join(__dirname, '../workers')))
+
+      // { "message": "hello world" }
+      // eyAibWVzc2FnZSI6ICJoZWxsbyB3b3JsZCIgfSA=
+
+      var req = {
+        message: 'hello-world:eyAibWVzc2FnZSI6ICJoZWxsbyB3b3JsZCIgfSA='
+      }
+
+      var router = new Router()
+      var worker = router.getWorker(req)
+      should.exist(req.data)
+      req.data.should.equal('eyAibWVzc2FnZSI6ICJoZWxsbyB3b3JsZCIgfSA=')
+      done()
+    })
+
+    it('should unpack an encapsulated primitive base64 message', function(done) {
+      config.set('workers.path', path.resolve(path.join(__dirname, '../workers')))
+
+      // { "message": "hello world" }
+      // eyAibWVzc2FnZSI6ICJoZWxsbyB3b3JsZCIgfSA=
+
+      var req = {
+        message: 'hello-world:[[eyAibWVzc2FnZSI6ICJoZWxsbyB3b3JsZCIgfSA=]]'
+      }
+
+      var router = new Router()
+      var worker = router.getWorker(req)
+      should.exist(req.data)
+      req.data.should.be.type('object')
+      req.data.should.have.property('message', 'hello world')
+      done()
+    })
   })
 })
