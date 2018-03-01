@@ -135,7 +135,6 @@ function loadConfig () {
   } finally {
     const env = conf.get('env')
     conf.loadFile('config/config.' + env + '.json')
-    conf.validate()
   }
 }
 
