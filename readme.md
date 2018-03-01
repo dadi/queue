@@ -51,7 +51,7 @@ See the [Why do I need a task queue?](#why-do-i-need-a-task-queue) section for m
 ## Configuration
 
 * **queue**
-  * **host**: (*ipaddress; default = 127.0.0.1*) The queue server host IP
+  * **host**: (*string; default = 127.0.0.1*) The queue server hostname or IP
   * **port**: (*port; default = 6379*) The queue server port number
 * **broker**
   * **queue**: (*string; default = ''*) The queue name
