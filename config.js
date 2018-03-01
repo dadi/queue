@@ -14,8 +14,8 @@ const conf = convict({
   },
   queue: {
     host: {
-      doc: 'The queue server host IP',
-      format: 'ipaddress',
+      doc: 'The queue server hostname or IP',
+      format: '*',
       default: '127.0.0.1'
     },
     port: {
@@ -135,7 +135,6 @@ function loadConfig () {
   } finally {
     const env = conf.get('env')
     conf.loadFile('config/config.' + env + '.json')
-    conf.validate()
   }
 }
 
