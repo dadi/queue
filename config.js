@@ -8,7 +8,7 @@ const path = require('path')
 const conf = convict({
   env: {
     doc: 'The applicaton environment',
-    format: ['production', 'development', 'test'],
+    format: String,
     default: 'development',
     env: 'NODE_ENV'
   },
