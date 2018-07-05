@@ -19,6 +19,7 @@
     "rsmq-worker": "^0.4.3"
   },
   "devDependencies": {
+    "coveralls": "^3.0.2",
     "env-test": "^1.0.0",
     "fakeredis": "^1.0.3",
     "ink-docstrap": "^1.3.0",
