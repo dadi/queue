@@ -8,7 +8,9 @@
     "test": "snazzy 'lib/*.js' && env NODE_ENV=test ./node_modules/.bin/istanbul cover --report cobertura --report text --report html --report lcov ./node_modules/mocha/bin/_mocha",
     "posttest": "./scripts/coverage.js",
     "start": "node ./index.js --node-env=development",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "@dadi/logger": "^1.0.0",
@@ -16,7 +18,8 @@
     "console-stamp": "^0.2.5",
     "convict": "^4.0.0",
     "mkdirp": "^0.5.1",
-    "rsmq-worker": "^0.4.3"
+    "rsmq-worker": "^0.4.3",
+    "snyk": "^1.88.1"
   },
   "devDependencies": {
     "coveralls": "^3.0.2",
@@ -39,5 +42,6 @@
     "type": "git",
     "url": "https://github.com/dadi/queue.git"
   },
-  "author": "Robert Stanford <rs@dadi.co>"
+  "author": "Robert Stanford <rs@dadi.co>",
+  "snyk": true
 }
