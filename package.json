@@ -16,7 +16,7 @@
     "@dadi/logger": "^1.0.0",
     "colors": "^1.1.2",
     "console-stamp": "^0.2.5",
-    "convict": "^4.0.0",
+    "convict": "^4.3.2",
     "mkdirp": "^0.5.1",
     "rsmq-worker": "^0.4.3",
     "snyk": "^1.88.1"
