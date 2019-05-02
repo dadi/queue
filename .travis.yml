@@ -7,9 +7,8 @@ notifications:
   email: false
 node_js:
   - '8'
-  - '6'
-before_install:
-  - if [[ `npm -v` != 3* ]]; then npm i -g npm@latest; fi
+  - '10'
+  - 'lts/*'
 before_script:
   - npm prune
 after_success:
@@ -17,13 +16,5 @@ after_success:
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/
-env:
-  - CXX=g++-4.8
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.8
 services:
   - redis-server
