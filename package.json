@@ -10,7 +10,8 @@
     "start": "node ./index.js --node-env=development",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    "prepare": "npm run snyk-protect",
+    "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
     "@dadi/boot": "^1.1.4",
@@ -20,7 +21,7 @@
     "convict": "^4.3.2",
     "mkdirp": "^0.5.1",
     "rsmq-worker": "^0.4.3",
-    "snyk": "^1.88.1"
+    "snyk": "^1.158.0"
   },
   "devDependencies": {
     "coveralls": "^3.0.2",
