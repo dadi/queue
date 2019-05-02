@@ -5,7 +5,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/dadi/queue/badge.svg?branch=master)](https://coveralls.io/github/dadi/queue?branch=master)
 [![Build Status](https://travis-ci.org/dadi/queue.svg?branch=master)](https://travis-ci.org/dadi/queue)
 [![JavaScript Style Guide](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](http://standardjs.com/)
-[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat-square)](https://github.com/semantic-release/semantic-release)
 
 A lightweight, high-performance task queue built on Node JS, Redis and [RSMQ](https://github.com/smrchy/rsmq). Includes a broker for queue management and routing, plus a worker framework for processing messages.
 
