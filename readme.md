@@ -269,7 +269,7 @@ Using a task queue, each API interaction can become a worker module. On order co
 DADI is a data centric development and delivery stack, built specifically in support of the principles of API first and COPE.
 
 Copyright notice
-(C) 2016 DADI+ Limited <support@dadi.tech>
+(C) 2019 DADI+ Limited <support@dadi.tech>
 All rights reserved
 
 This product is part of DADI.<br />
