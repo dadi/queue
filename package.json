@@ -15,6 +15,7 @@
   "dependencies": {
     "@dadi/boot": "^1.1.4",
     "@dadi/logger": "^1.4.0",
+    "chokidar": "^3.0.0",
     "colors": "^1.1.2",
     "console-stamp": "^0.2.5",
     "convict": "^4.3.2",
