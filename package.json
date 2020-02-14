@@ -1,6 +1,6 @@
 {
   "name": "@dadi/queue",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "A lightweight, high-performance task queue built on Node JS and Redis. Includes a broker for queue management and routing, plus a worker framework for processing messages.",
   "main": "index.js",
   "scripts": {
@@ -40,6 +40,6 @@
     "type": "git",
     "url": "https://github.com/dadi/queue.git"
   },
-  "author": "Robert Stanford <rs@dadi.co>",
+  "author": "Edge <core@edge.network>",
   "snyk": true
 }
