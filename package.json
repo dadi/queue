@@ -20,7 +20,7 @@
     "convict": "^4.3.2",
     "mkdirp": "^0.5.1",
     "rsmq-worker": "^0.4.3",
-    "snyk": "^1.158.0"
+    "snyk": "^1.234.0"
   },
   "devDependencies": {
     "coveralls": "^3.0.2",
